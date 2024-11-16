@@ -4,7 +4,10 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
 import { ShutdownService } from '@/service/shutdown.service';
 import { NetService } from '@/service/net.service';
-
+import { Logger } from '@nestjs/common';
+import { MiddlewareConfig, middleware } from '@line/bot-sdk';
+import * as dotenv from 'dotenv';
+dotenv.config();
 async function logServiceInfo(app: INestApplication, port: number) {
     const configService = app.get(ConfigService);
 
@@ -26,15 +29,20 @@ async function logServiceInfo(app: INestApplication, port: number) {
 async function bootstrap() {
     // Initialize the NestJS application
     const app = await NestFactory.create(AppModule);
-
     // Get the services from the app
     const configService = app.get(ConfigService);
     const shutdownService = app.get(ShutdownService);
     const netService = app.get(NetService);
-
+    
+    const lineMiddlewareConfig: MiddlewareConfig = {
+        channelAccessToken: process.env.ACCESS_TOKEN,
+        channelSecret: process.env.CHANNEL_SECRET,
+    };
+    app.enableCors();
+    
+    app.use('/line/webhook', middleware(lineMiddlewareConfig));
     // Get the port from the configuration
     const port = configService.get<number>('PORT', 3000);
-
     // Check if the port is already in use
     const portInUse = await netService.isPortInUse(port);
     if (portInUse) {
@@ -55,6 +63,8 @@ async function bootstrap() {
     process.on('SIGINT', () =>
         shutdownService.gracefulShutdown(server, 'SIGINT')
     );
+    
+    
 }
 
 bootstrap();

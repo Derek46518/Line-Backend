@@ -7,12 +7,13 @@ import { ShutdownService } from '@/service/shutdown.service';
 import { NetService } from '@/service/net.service';
 import { UtilsService } from '@/service/utils.service';
 import { DemoService } from '@/service/demo.service';
-
+import { LineBotService } from './line-bot.service';
 @Module({
     imports: [
         ConfigModule.forRoot({
             envFilePath: ['.env', '.env.local']
-        })
+        }),
+        
     ],
     controllers: [AppController, DemoController],
     providers: [
@@ -20,7 +21,8 @@ import { DemoService } from '@/service/demo.service';
         ShutdownService,
         NetService,
         UtilsService,
-        DemoService
+        DemoService,
+        LineBotService
     ]
 })
 export class AppModule {}
