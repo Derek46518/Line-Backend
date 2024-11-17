@@ -8,6 +8,8 @@ import { NetService } from '@/service/net.service';
 import { UtilsService } from '@/service/utils.service';
 import { DemoService } from '@/service/demo.service';
 import { LineBotService } from './line-bot.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BroadcastService } from './broadcast.service';
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -22,7 +24,8 @@ import { LineBotService } from './line-bot.service';
         NetService,
         UtilsService,
         DemoService,
-        LineBotService
+        LineBotService,
+        BroadcastService
     ]
 })
 export class AppModule {}
